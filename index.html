@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FD Lanka — Fixed Deposit Calculator | Powered by FintechLK</title>
+  <meta name="description" content="Calculate Fixed Deposit returns for Commercial Bank Standard FD & eFD with custom annual interest rates and 10% AIT tax calculations.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+  <link rel="shortcut icon" href="assets/favicon.ico">
+
+  <!-- Google Fonts: Ledger Aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="ledger-theme">
+  
+  <!-- Header Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-block">
+        <img src="assets/logo.svg" alt="FD Lanka Logo" class="brand-logo" width="48" height="48">
+        <div class="brand-text">
+          <h1 class="brand-title">FD Lanka</h1>
+          <p class="brand-tagline">Know your return before you deposit.</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="powered-badge">Powered by <span>FintechLK</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-wrapper">
+    <div class="container">
+
+      <!-- Navigation Tabs: Standard FD & eFD -->
+      <nav class="fd-tabs" aria-label="Fixed Deposit Product Selection">
+        <button class="tab-btn active" data-tab="standard">
+          <span class="tab-icon">🏦</span> Standard FD
+        </button>
+        <button class="tab-btn" data-tab="efd">
+          <span class="tab-icon">📱</span> eFD (Digital FD)
+        </button>
+      </nav>
+
+      <!-- Calculator Grid: Form + Results -->
+      <div class="calculator-grid">
+        
+        <!-- Form Section -->
+        <section class="card form-card">
+          <div class="card-header">
+            <h2 class="card-title">1. Deposit & Rate Inputs</h2>
+            <span class="card-sub">Commercial Bank Fixed Deposit Calculator</span>
+          </div>
+
+          <div class="card-body">
+            <!-- Deposit Amount Field -->
+            <div class="form-group">
+              <label for="deposit-amount" class="form-label">
+                Deposit Amount (LKR)
+              </label>
+              <div class="input-currency-wrapper">
+                <span class="currency-prefix">Rs.</span>
+                <input type="text" id="deposit-amount" class="form-input text-mono" value="100,000" inputmode="numeric" placeholder="100,000">
+              </div>
+              <div id="min-deposit-warning" class="inline-warning" style="display: none;">
+                Minimum deposit warning
+              </div>
+            </div>
+
+            <!-- Tenure Selection Chips -->
+            <div class="form-group">
+              <div class="label-with-action">
+                <label class="form-label">Select Tenure</label>
+                <div class="custom-toggle-inline">
+                  <input type="checkbox" id="toggle-custom-tenure">
+                  <label for="toggle-custom-tenure">Custom Tenure</label>
+                </div>
+              </div>
+
+              <!-- Tenure Chips Grid -->
+              <div id="tenure-chips" class="tenure-chips-grid"></div>
+
+              <!-- Custom Tenure Inputs (Days, Months, Years) -->
+              <div id="custom-tenure-wrapper" class="custom-inputs-row" style="display: none;">
+                <div class="form-group flex-1">
+                  <label for="custom-tenure-val" class="sub-label">Duration</label>
+                  <input type="number" id="custom-tenure-val" class="form-input text-mono" value="12" min="1" max="1825">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="custom-tenure-unit" class="sub-label">Unit</label>
+                  <select id="custom-tenure-unit" class="form-select">
+                    <option value="days">Days</option>
+                    <option value="months" selected>Months</option>
+                    <option value="years">Years</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Annual Interest Rate (%) Field -->
+            <div class="form-group">
+              <label for="annual-rate-input" class="form-label">
+                Annual Interest Rate (% p.a.)
+              </label>
+              <div class="input-suffix-wrapper">
+                <input type="number" id="annual-rate-input" class="form-input text-mono" value="10.00" step="0.05" min="0" max="50">
+                <span class="input-suffix">% p.a.</span>
+              </div>
+              <small class="field-hint">Auto-filled from selected tenure, or type your custom rate.</small>
+            </div>
+
+            <!-- Interest Payout Options -->
+            <div id="payout-options-container" class="form-group">
+              <label class="form-label">Interest Payout Frequency</label>
+              <div class="radio-group">
+                <label class="radio-card">
+                  <input type="radio" name="payout-frequency" value="maturity" checked>
+                  <span class="radio-content">
+                    <strong class="radio-title">At Maturity</strong>
+                    <small>Interest paid at deposit maturity</small>
+                  </span>
+                </label>
+
+                <label class="radio-card">
+                  <input type="radio" name="payout-frequency" value="monthly">
+                  <span class="radio-content">
+                    <strong class="radio-title">Monthly Payout</strong>
+                    <small>Monthly regular interest payout</small>
+                  </span>
+                </label>
+
+                <label class="radio-card">
+                  <input type="radio" name="payout-frequency" value="annually">
+                  <span class="radio-content">
+                    <strong class="radio-title">Annually</strong>
+                    <small>Paid once every year (2+ year tenures)</small>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Tax Declaration -->
+            <div class="form-group border-top-dashed pt-15">
+              <label class="checkbox-label">
+                <input type="checkbox" id="tax-exempt-check">
+                <span>I have filed a tax exemption self-declaration (assessable income ≤ Rs. 1,800,000)</span>
+              </label>
+            </div>
+
+            <!-- CALCULATE BUTTON -->
+            <div class="form-group mt-20">
+              <button type="button" id="calc-btn" class="btn-calc">
+                🧮 Calculate Returns
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Calculation Results Panel -->
+        <section id="results-card" class="card results-card">
+          <div class="card-header border-bottom-gold">
+            <h2 class="card-title">2. Returns Breakdown</h2>
+            <span class="card-sub">Commercial Bank Ledger Summary</span>
+          </div>
+
+          <div class="card-body">
+            <!-- Red & Gold Wax-Seal Badge -->
+            <div class="wax-seal-container">
+              <div class="wax-seal">
+                <div class="wax-seal-inner">
+                  <span class="wax-seal-subtitle" id="wax-seal-label">Est. Maturity Value</span>
+                  <span class="wax-seal-amount text-mono" id="wax-seal-value">Rs. 0.00</span>
+                  <span class="wax-seal-stamp">ComBank LK</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Streamlined Ledger Summary Table -->
+            <div class="ledger-table-wrapper">
+              <table class="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Ledger Item</th>
+                    <th class="text-right">Value (LKR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Principal Deposit</td>
+                    <td class="text-right text-mono font-weight-bold" id="res-principal">Rs. 0.00</td>
+                  </tr>
+                  <tr>
+                    <td>Plan & Tenure</td>
+                    <td class="text-right text-mono" id="res-plan-tenure">Standard FD — 12M</td>
+                  </tr>
+                  <tr class="row-highlight">
+                    <td>Gross Interest Earned</td>
+                    <td class="text-right text-mono text-green font-weight-bold" id="res-gross-interest">Rs. 0.00</td>
+                  </tr>
+                  <tr class="row-tax">
+                    <td id="res-tax-label">AIT Tax (10%)</td>
+                    <td class="text-right text-mono text-red" id="res-tax-amount">- Rs. 0.00</td>
+                  </tr>
+                  <tr class="row-highlight">
+                    <td>Net Interest Receivable</td>
+                    <td class="text-right text-mono text-green font-weight-bold" id="res-net-interest">Rs. 0.00</td>
+                  </tr>
+                  <tr class="row-total">
+                    <td>Est. Total Maturity Value</td>
+                    <td class="text-right text-mono font-weight-bold text-navy" id="res-maturity-value">Rs. 0.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Persistent Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="disclaimer-banner">
+        <p class="disclaimer-text">
+          <strong>Mandatory Disclaimer:</strong> These interest rates are indicative. Interest rates change frequently and without notice. Please confirm exact rates with Commercial Bank (branch, hotline, or combank.lk) before placing or renewing a fixed deposit. This calculator is not financial advice and FintechLK is not liable for decisions made based on it.
+        </p>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 FD Lanka. All rights reserved. | <strong>Powered by FintechLK</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>
